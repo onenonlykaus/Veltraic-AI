@@ -22,6 +22,8 @@ export interface RecentItem {
   timestamp: string;
 }
 
+import { UserAccount } from './AuthModal';
+
 interface SidebarProps {
   activeTab: 'landing' | 'chat' | 'campaign' | 'python-gpu' | 'copilot' | 'monetization' | 'uniqueness';
   setActiveTab: (tab: 'landing' | 'chat' | 'campaign' | 'python-gpu' | 'copilot' | 'monetization' | 'uniqueness') => void;
@@ -29,6 +31,8 @@ interface SidebarProps {
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
   onNewCampaign: () => void;
+  currentUser: UserAccount | null;
+  onOpenAuth: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -37,7 +41,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   gpuStats,
   collapsed,
   setCollapsed,
-  onNewCampaign
+  onNewCampaign,
+  currentUser,
+  onOpenAuth
 }) => {
   // Recent items state
   const [recents, setRecents] = useState<RecentItem[]>([
@@ -220,35 +226,64 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       {/* Bottom User Section */}
-      <div className="p-3 border-t border-[#222] bg-[#080808]">
+      <div className="p-3 border-t border-[#1e2438] bg-[#090b16]">
         {!collapsed ? (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-8 h-8 rounded-full bg-[#1c1c28] border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-mono text-xs font-bold shrink-0">
-                JL
-              </div>
-              <div className="truncate">
-                <div className="text-xs font-bold text-white font-mono truncate">
-                  JN LAZER
+          <div className="flex items-center justify-between gap-2">
+            {currentUser ? (
+              <div className="flex items-center gap-2.5 overflow-hidden">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 border border-indigo-400/30 flex items-center justify-center text-white font-display font-extrabold text-xs shrink-0 shadow-md">
+                  {currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'VU'}
                 </div>
-                <div className="text-[10px] text-indigo-400 font-mono font-medium flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> Pro Founder
+                <div className="truncate">
+                  <div className="text-xs font-bold text-white font-display truncate">
+                    {currentUser.name}
+                  </div>
+                  <div className="text-[10px] text-indigo-400 font-mono font-medium flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-300" /> {currentUser.plan}
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-center gap-2.5 overflow-hidden">
+                <div className="w-8 h-8 rounded-lg bg-[#141829] border border-[#232b45] flex items-center justify-center text-gray-400 font-mono text-xs font-bold shrink-0">
+                  ?
+                </div>
+                <div className="truncate">
+                  <div className="text-xs font-bold text-gray-300 font-display truncate">
+                    Guest Account
+                  </div>
+                  <div className="text-[10px] text-gray-500 font-mono">
+                    Signed Out
+                  </div>
+                </div>
+              </div>
+            )}
 
-            <button 
-              onClick={() => setActiveTab('monetization')}
-              className="px-2 py-1 bg-[#181818] hover:bg-[#222] border border-[#333] text-amber-300 text-[10px] font-mono font-medium rounded-md transition-all cursor-pointer"
-            >
-              Coming Soon
-            </button>
+            {!currentUser ? (
+              <button 
+                onClick={onOpenAuth}
+                className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-display font-bold rounded-md transition-all cursor-pointer shrink-0 shadow-sm"
+              >
+                Log In
+              </button>
+            ) : (
+              <button 
+                onClick={() => setActiveTab('monetization')}
+                className="px-2 py-1 bg-[#141829] hover:bg-[#1e243b] border border-[#232b45] text-amber-300 text-[10px] font-mono font-medium rounded-md transition-all cursor-pointer shrink-0"
+              >
+                Pro Plan
+              </button>
+            )}
           </div>
         ) : (
           <div className="flex justify-center">
-            <div className="w-8 h-8 rounded-full bg-[#1c1c28] border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-mono text-xs font-bold">
-              JL
-            </div>
+            <button 
+              onClick={onOpenAuth}
+              className="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-display text-xs font-bold cursor-pointer hover:bg-indigo-600 hover:text-white transition-colors"
+              title={currentUser ? currentUser.name : 'Log In'}
+            >
+              {currentUser ? currentUser.name.charAt(0).toUpperCase() : '?'}
+            </button>
           </div>
         )}
       </div>

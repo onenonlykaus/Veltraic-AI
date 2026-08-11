@@ -102,6 +102,8 @@ export default function App() {
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
         onNewCampaign={handleNewCampaign}
+        currentUser={currentUser}
+        onOpenAuth={() => setIsAuthOpen(true)}
       />
 
       {/* Main Content Area next to Sidebar */}
@@ -142,7 +144,14 @@ export default function App() {
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Animated Talk Assistant Top Button */}
             <button
-              onClick={() => setActiveTab('chat')}
+              onClick={() => {
+                if (!currentUser) {
+                  setIsAuthOpen(true);
+                  triggerToast('Please log in or sign up to access Talk Assistant.');
+                } else {
+                  setActiveTab('chat');
+                }
+              }}
               className="relative px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white text-xs font-display font-extrabold flex items-center gap-2 transition-all cursor-pointer shadow-xl shadow-indigo-600/40 hover:scale-105 active:scale-95 group overflow-hidden border border-indigo-400/30"
             >
               <span className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></span>
@@ -153,12 +162,12 @@ export default function App() {
 
             {/* Login / Sign Up or Logged In Badge */}
             {currentUser ? (
-              <div className="flex items-center gap-2 bg-[#141414] border border-[#333] pl-2.5 pr-1.5 py-1 rounded-lg">
+              <div className="flex items-center gap-2 bg-[#141829] border border-[#232b45] pl-2.5 pr-1.5 py-1 rounded-lg">
                 <div className="flex items-center gap-1.5">
                   <div className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center font-display font-bold text-[10px]">
                     {currentUser.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-xs font-display font-bold text-white hidden md:inline truncate max-w-[100px]">
+                  <span className="text-xs font-display font-bold text-white hidden md:inline truncate max-w-[120px]">
                     {currentUser.name}
                   </span>
                   <span className="text-[9px] font-mono text-indigo-400 bg-indigo-950 px-1.5 py-0.5 rounded border border-indigo-500/30 hidden lg:inline">
@@ -167,7 +176,7 @@ export default function App() {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-1 hover:bg-[#222] text-gray-400 hover:text-red-400 rounded transition-colors cursor-pointer"
+                  className="p-1 hover:bg-[#1e243b] text-gray-400 hover:text-red-400 rounded transition-colors cursor-pointer"
                   title="Log Out"
                 >
                   <LogOut className="w-3.5 h-3.5" />
@@ -176,20 +185,12 @@ export default function App() {
             ) : (
               <button
                 onClick={() => setIsAuthOpen(true)}
-                className="px-3 py-1.5 rounded-lg bg-white hover:bg-gray-200 text-black text-xs font-display font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-gray-200 text-black text-xs font-display font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
               >
                 <User className="w-3.5 h-3.5 text-black" />
                 <span>Log In / Sign Up</span>
               </button>
             )}
-
-            <button
-              onClick={() => setActiveTab('uniqueness')}
-              className="px-2.5 py-1.5 rounded-lg bg-indigo-950/60 border border-indigo-500/30 text-indigo-400 text-[11px] font-mono font-semibold flex items-center gap-1.5 hover:bg-indigo-900/50 transition-colors cursor-pointer hidden lg:flex"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>100% Unique Brand</span>
-            </button>
           </div>
         </header>
 
@@ -197,30 +198,65 @@ export default function App() {
         <main className="flex-1 px-4 sm:px-8 py-6 pb-20 max-w-7xl w-full mx-auto">
           {activeTab === 'landing' && (
             <LandingPage 
-              onLaunchApp={(tab) => setActiveTab(tab || 'chat')} 
+              onLaunchApp={(tab) => {
+                if (!currentUser) {
+                  setIsAuthOpen(true);
+                  triggerToast('Please log in or create an account to enter Veltraic Studio.');
+                } else {
+                  setActiveTab(tab || 'chat');
+                }
+              }} 
               onNotify={triggerToast}
               onOpenAuth={() => setIsAuthOpen(true)}
               currentUser={currentUser}
             />
           )}
 
-          {activeTab === 'chat' && (
-            <FullChatPage 
-              onNotify={triggerToast}
-              onNavigateTab={(tab) => setActiveTab(tab)}
-            />
-          )}
+          {/* Protected Studio Tabs */}
+          {!currentUser && activeTab !== 'landing' && activeTab !== 'monetization' && activeTab !== 'uniqueness' ? (
+            <div className="bg-[#0e111d] border border-[#232b45] rounded-2xl p-8 sm:p-12 text-center max-w-xl mx-auto my-12 space-y-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center mx-auto text-white shadow-xl shadow-indigo-600/30">
+                <User className="w-8 h-8" />
+              </div>
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-500/30 text-indigo-400 text-xs font-mono">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  <span>SIGN IN REQUIRED</span>
+                </div>
+                <h2 className="text-2xl font-bold font-display text-white">Sign In to Access Veltraic AI Studio</h2>
+                <p className="text-xs sm:text-sm text-gray-400 max-w-md mx-auto">
+                  Please log in or create your free account to use Talk AI Assistant, Campaign Studio, Python GPU Core, and Co-Founder Copilot.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsAuthOpen(true)}
+                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:to-purple-500 text-white font-display font-bold text-xs sm:text-sm shadow-xl shadow-indigo-600/40 transition-all hover:scale-105 cursor-pointer inline-flex items-center gap-2 border border-indigo-400/30"
+              >
+                <LogIn className="w-4 h-4 text-amber-300" />
+                <span>Log In / Create Free Account</span>
+              </button>
+            </div>
+          ) : (
+            <>
+              {activeTab === 'chat' && (
+                <FullChatPage 
+                  onNotify={triggerToast}
+                  onNavigateTab={(tab) => setActiveTab(tab)}
+                />
+              )}
 
-          {activeTab === 'campaign' && (
-            <CampaignStudio campaign={campaign} setCampaign={setCampaign} onNotify={triggerToast} />
-          )}
+              {activeTab === 'campaign' && (
+                <CampaignStudio campaign={campaign} setCampaign={setCampaign} onNotify={triggerToast} />
+              )}
 
-          {activeTab === 'python-gpu' && (
-            <PythonGpuEngine gpuStats={gpuStats} onNotify={triggerToast} />
-          )}
+              {activeTab === 'python-gpu' && (
+                <PythonGpuEngine gpuStats={gpuStats} onNotify={triggerToast} />
+              )}
 
-          {activeTab === 'copilot' && (
-            <CopilotChat onNotify={triggerToast} />
+              {activeTab === 'copilot' && (
+                <CopilotChat onNotify={triggerToast} />
+              )}
+            </>
           )}
 
           {activeTab === 'monetization' && (

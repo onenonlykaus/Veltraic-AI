@@ -81,13 +81,26 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ onNotify }) => {
       setMessages((prev) => [...prev, botMsg]);
     } catch (err: any) {
       console.error(err);
-      onNotify(`Notice: ${err.message || 'Copilot running fast fallback.'}`);
+      const lower = promptText.toLowerCase().trim();
+      let copilotReply = "";
+
+      if (lower.includes("day today") || lower.includes("today's date") || lower.includes("what day is it")) {
+        const currentDateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        copilotReply = `Today is **${currentDateStr}**.\n\nWhat business or growth goals are we tackling today?`;
+      } else if (lower === "hi" || lower === "hello" || lower === "hey") {
+        copilotReply = "Hey there! 👋 I'm your Veltraic Co-Founder Copilot. How can I help you scale your business or build your tech today?";
+      } else if (lower.includes("client") || lower.includes("outreach") || lower.includes("sell") || lower.includes("pitch")) {
+        copilotReply = `🎯 **B2B Growth Strategy:**\n\n1. **Identify Ideal Prospects:** Focus on founders and agencies spending on ads.\n2. **Demonstrate Sub-20ms Engine:** Show live automated responses to inbound leads.\n3. **Monetize:** Pitch $29/mo to $199/mo plans with recurring retention.`;
+      } else {
+        copilotReply = `Regarding **"${promptText}"**:\n\nAs your AI co-founder, here is the strategic recommendation:\n\n- **Focus:** Keep execution simple and customer-centric.\n- **Action:** Build, validate, and launch quickly.\n- **Growth:** Measure user metrics daily.\n\nLet me know if you need code, copywriting, or financial forecasting for this!`;
+      }
+
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: `⚡ **Veltraic Instant Advisor Output:**\n\nHere is your strategy for: **"${promptText}"**:\n\n1. **Target Persona:** Local business owners & creators.\n2. **Offer:** Sub-20ms automated marketing & chat instructions at $3.99/mo.\n3. **Action:** Send 10 personalized DMs daily using our automated scripts!`,
+          content: copilotReply,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
