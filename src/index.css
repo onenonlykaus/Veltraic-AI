@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #090b14;
+    color: #e2e8f0;
+    letter-spacing: -0.01em;
+  }
+  
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Sora', 'Outfit', sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom Keyframe Animations - Soft & Eye-Friendly */
+@keyframes floatGlow {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.05);
+    opacity: 0.6;
+  }
+}
+
+@keyframes borderGlowPulse {
+  0%, 100% {
+    border-color: rgba(99, 102, 241, 0.25);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.08);
+  }
+  50% {
+    border-color: rgba(168, 85, 247, 0.45);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.18);
+  }
+}
+
+@keyframes shimmerGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-float-slow {
+  animation: floatGlow 6s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: borderGlowPulse 4s infinite ease-in-out;
+}
+
+.animate-shimmer-text {
+  background-size: 200% 200%;
+  animation: shimmerGradient 4s ease infinite;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d0f1c;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e2438;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d3552;
+}
+

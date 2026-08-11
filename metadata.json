@@ -1,0 +1,6 @@
+{
+  "name": "Veltraic AI Engine",
+  "description": "Super-fast, affordable sub-20ms AI intelligence & growth engine with Talk AI Assistant, Python GPU pipeline, and real-time execution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
