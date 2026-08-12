@@ -11,6 +11,7 @@ import { AuthModal, UserAccount } from './components/AuthModal';
 import { CampaignData, GPUStats } from './types';
 import { DEFAULT_CAMPAIGN } from './data/defaultTemplates';
 import { Zap, Menu, ShieldCheck, MessageSquare, User, LogIn, LogOut, Sparkles } from 'lucide-react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 export type ActiveTabType = 'landing' | 'chat' | 'campaign' | 'python-gpu' | 'copilot' | 'monetization' | 'uniqueness';
 
@@ -288,6 +289,7 @@ export default function App() {
           </div>
         </footer>
       </div>
+      <SpeedInsights />
     </div>
   );
 }
